@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Place Order</title>
+  <style>
+    body {
+      background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT7TEKDLnrS9_RJGqnlv6YtxMsAde4fvpBWvw&s');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
+      text-align: center;
+      padding: 50px 20px;
+      margin: 0;
+      height: 100vh;
+    }
+
+    h1 {
+      font-size: 48px;
+      margin-bottom: 40px;
+      text-shadow: 2px 2px 4px #000;
+    }
+
+    form {
+      background: rgba(0, 0, 0, 0.6);
+      padding: 30px;
+      border-radius: 15px;
+      display: inline-block;
+    }
+
+    input[type="text"], button {
+      display: block;
+      margin: 15px auto;
+      padding: 12px;
+      width: 90%;
+      max-width: 300px;
+      font-size: 18px;
+      border-radius: 8px;
+      border: none;
+    }
+
+    label {
+      display: block;
+      text-align: left;
+      margin: 5px 0;
+      font-size: 18px;
+    }
+
+    input[type="checkbox"] {
+      margin-right: 10px;
+    }
+
+    button {
+      background-color: #4CAF50;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    #message {
+      font-size: 20px;
+      margin-top: 20px;
+    }
+
+    .back-btn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background-color: #2196f3;
+      padding: 10px 20px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      color: white;
+    }
+
+    .back-btn:hover {
+      background-color: #1976d2;
+    }
+  </style>
+</head>
+<body>
+  <button class="back-btn" onclick="location.href='home.html'">⬅️ Home</button>
+  <h1>🧑‍🎓 Place Your Order</h1>
+
+  <form id="orderForm">
+    <input type="text" name="name" placeholder="Your Name" required />
+    <input type="text" name="roll" placeholder="Roll Number" required />
+
+    <div style="text-align:left; max-width: 300px; margin: auto;">
+      <label><input type="checkbox" name="item" value="Dosa"> Dosa - ₹40</label>
+      <label><input type="checkbox" name="item" value="Idli"> Idli - ₹30</label>
+      <label><input type="checkbox" name="item" value="Vada"> Vada - ₹25</label>
+      <label><input type="checkbox" name="item" value="Upma"> Upma - ₹35</label>
+    </div>
+
+    <button type="submit">Place Order</button>
+  </form>
+
+  <p id="message"></p>
+
+  <script>
+    const form = document.getElementById('orderForm');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const selectedItems = Array.from(document.querySelectorAll('input[name="item"]:checked'))
+                                 .map(cb => cb.value);
+
+      if (selectedItems.length === 0) {
+        document.getElementById('message').innerText = 'Please select at least one item.';
+        return;
+      }
+
+      const res = await fetch('/order', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          name: form.name.value,
+          roll: form.roll.value,
+          item: selectedItems.join(', ')
+        })
+      });
+
+      const data = await res.json();
+      document.getElementById('message').innerText = data.message;
+      form.reset();
+    });
+  </script>
+</body>
+</html>

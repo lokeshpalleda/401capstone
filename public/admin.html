@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>View Orders</title>
+  <style>
+    body {
+      background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUz9jDPZNpvkpJWKXq7UbHwHZrNJlPZj2zXA&s');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
+      padding: 40px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 40px;
+      margin-bottom: 30px;
+      text-shadow: 2px 2px 5px #000;
+    }
+
+    .order {
+      background: rgba(0, 0, 0, 0.6);
+      margin: 15px auto;
+      padding: 20px;
+      max-width: 500px;
+      border-radius: 12px;
+      text-align: left;
+    }
+
+    .order p {
+      font-size: 18px;
+      margin: 5px 0;
+    }
+
+    .back-btn {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background-color: #2196f3;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+  }
+
+    .back-btn:hover {
+      background-color: #1976d2;
+    }
+  </style>
+</head>
+<body>
+  <button class="back-btn" onclick="location.href='home.html'">⬅️ Home</button>
+  <h1>📋 All Orders</h1>
+  <div id="orders"></div>
+
+  <script>
+    async function fetchOrders() {
+      const res = await fetch('/orders');
+      const orders = await res.json();
+      const container = document.getElementById('orders');
+      orders.forEach(order => {
+        const div = document.createElement('div');
+        div.className = 'order';
+        div.innerHTML = `
+          <p><strong>Name:</strong> ${order.name}</p>
+          <p><strong>Roll:</strong> ${order.roll}</p>
+          <p><strong>Items:</strong> ${order.item}</p>
+          <p><strong>Status:</strong> ${order.status}</p>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    fetchOrders();
+  </script>
+</body>
+</html>
