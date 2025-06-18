@@ -42,10 +42,13 @@
       background-color: #45a049;
     }
 
+    #adminCodeField {
+      display: none;
+    }
+
     #message {
-      margin-top: 10px;
-      font-size: 16px;
-      color: yellow;
+      color: red;
+      font-weight: bold;
     }
   </style>
 </head>
@@ -54,15 +57,36 @@
     <h1>🔐 Login / Sign Up</h1>
     <input type="email" id="email" placeholder="Email" required />
     <input type="password" id="password" placeholder="Password" required />
-    <select id="role">
+    
+    <select id="role" onchange="toggleAdminCode()">
       <option value="student">Student</option>
       <option value="admin">Admin</option>
     </select>
+
+    <input type="password" id="adminCodeField" placeholder="Enter Admin Access Code" />
+
     <button onclick="signup()">Sign Up</button>
     <button onclick="login()">Login</button>
     <div id="message"></div>
   </div>
 
-  <script type="module" src="./auth-script.js"></script>
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+
+  <!-- Firebase Config -->
+  <script src="firebase-config.js"></script>
+
+  <!-- Auth Script -->
+  <script type="module" src="auth-script.js"></script>
+
+  <script>
+    function toggleAdminCode() {
+      const role = document.getElementById("role").value;
+      const adminCodeField = document.getElementById("adminCodeField");
+      adminCodeField.style.display = role === "admin" ? "block" : "none";
+    }
+  </script>
 </body>
 </html>

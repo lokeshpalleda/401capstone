@@ -1,34 +1,41 @@
+// public/auth-script.js
 import { auth, db } from "./firebase-config.js";
 import {
   createUserWithEmailAndPassword,
-  signInWithEmailAndPassword
+  signInWithEmailAndPassword,
 } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
-
 import {
   setDoc,
   doc,
-  getDoc
+  getDoc,
 } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-const roleDropdown = document.getElementById("role");
 const emailInput = document.getElementById("email");
 const passwordInput = document.getElementById("password");
+const roleDropdown = document.getElementById("role");
+const adminCodeField = document.getElementById("adminCodeField");
 const message = document.getElementById("message");
+
+const ADMIN_SECRET = "canteen123"; // You can change this as needed
 
 window.signup = async function () {
   const email = emailInput.value;
   const password = passwordInput.value;
   const role = roleDropdown.value;
+  const adminCode = adminCodeField.value;
 
   try {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    if (role === "admin" && adminCode !== ADMIN_SECRET) {
+      throw new Error("Invalid admin access code.");
+    }
 
-    await setDoc(doc(db, "users", userCredential.user.uid), {
-      email: email,
-      role: role
+    const userCred = await createUserWithEmailAndPassword(auth, email, password);
+    await setDoc(doc(db, "users", userCred.user.uid), {
+      role: role,
+      email: email
     });
 
-    message.innerText = "Signup successful. Please log in.";
+    alert("Signup successful! Please log in.");
   } catch (error) {
     message.innerText = error.message;
   }
@@ -39,22 +46,20 @@ window.login = async function () {
   const password = passwordInput.value;
 
   try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    const userRef = doc(db, "users", userCredential.user.uid);
-    const userSnap = await getDoc(userRef);
+    const userCred = await signInWithEmailAndPassword(auth, email, password);
+    const userDoc = await getDoc(doc(db, "users", userCred.user.uid));
 
-    if (userSnap.exists()) {
-      const role = userSnap.data().role;
-
-      if (role === "admin") {
-        window.location.href = "admin.html";
-      } else {
-        window.location.href = "index.html";
-      }
-    } else {
-      message.innerText = "User role not found.";
+    if (!userDoc.exists()) {
+      throw new Error("No user record found.");
     }
 
+    const role = userDoc.data().role;
+
+    if (role === "admin") {
+      window.location.href = "admin.html";
+    } else {
+      window.location.href = "index.html";
+    }
   } catch (error) {
     message.innerText = error.message;
   }
