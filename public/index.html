@@ -1,14 +1,13 @@
+<!-- public/index.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
   <title>Place Order</title>
   <style>
     body {
       background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT7TEKDLnrS9_RJGqnlv6YtxMsAde4fvpBWvw&s');
       background-size: cover;
       background-position: center;
-      background-repeat: no-repeat;
       font-family: 'Segoe UI', sans-serif;
       color: white;
       text-align: center;
@@ -30,7 +29,7 @@
       display: inline-block;
     }
 
-    input[type="text"], button {
+    input, select, button {
       display: block;
       margin: 15px auto;
       padding: 12px;
@@ -39,17 +38,6 @@
       font-size: 18px;
       border-radius: 8px;
       border: none;
-    }
-
-    label {
-      display: block;
-      text-align: left;
-      margin: 5px 0;
-      font-size: 18px;
-    }
-
-    input[type="checkbox"] {
-      margin-right: 10px;
     }
 
     button {
@@ -66,58 +54,28 @@
       font-size: 20px;
       margin-top: 20px;
     }
-
-    .back-btn {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      background-color: #2196f3;
-      padding: 10px 20px;
-      border-radius: 8px;
-      border: none;
-      cursor: pointer;
-      color: white;
-    }
-
-    .back-btn:hover {
-      background-color: #1976d2;
-    }
   </style>
 </head>
 <body>
-  <button class="back-btn" onclick="location.href='home.html'">⬅️ Home</button>
   <h1>🧑‍🎓 Place Your Order</h1>
-
   <form id="orderForm">
     <input type="text" name="name" placeholder="Your Name" required />
     <input type="text" name="roll" placeholder="Roll Number" required />
-
-    <div style="text-align:left; max-width: 300px; margin: auto;">
-      <label><input type="checkbox" name="item" value="Dosa"> Dosa - ₹40</label>
-      <label><input type="checkbox" name="item" value="Idli"> Idli - ₹30</label>
-      <label><input type="checkbox" name="item" value="Vada"> Vada - ₹25</label>
-      <label><input type="checkbox" name="item" value="Upma"> Upma - ₹35</label>
-    </div>
-
+    <select name="item" multiple size="4" required>
+      <option value="Dosa">Dosa - ₹40</option>
+      <option value="Idli">Idli - ₹30</option>
+      <option value="Vada">Vada - ₹25</option>
+      <option value="Upma">Upma - ₹35</option>
+    </select>
     <button type="submit">Place Order</button>
   </form>
-
   <p id="message"></p>
 
   <script>
     const form = document.getElementById('orderForm');
-
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-
-      const selectedItems = Array.from(document.querySelectorAll('input[name="item"]:checked'))
-                                 .map(cb => cb.value);
-
-      if (selectedItems.length === 0) {
-        document.getElementById('message').innerText = 'Please select at least one item.';
-        return;
-      }
-
+      const selectedItems = Array.from(form.item.selectedOptions).map(opt => opt.value);
       const res = await fetch('/order', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
@@ -127,7 +85,6 @@
           item: selectedItems.join(', ')
         })
       });
-
       const data = await res.json();
       document.getElementById('message').innerText = data.message;
       form.reset();

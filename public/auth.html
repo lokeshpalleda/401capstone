@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login / Sign Up</title>
+  <style>
+    body {
+      background-image: url('https://images.unsplash.com/photo-1600891964599-f61ba0e24092');
+      background-size: cover;
+      background-position: center;
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
+      text-align: center;
+      padding-top: 100px;
+    }
+
+    .form-container {
+      background: rgba(0, 0, 0, 0.7);
+      padding: 30px;
+      border-radius: 15px;
+      display: inline-block;
+    }
+
+    input, select, button {
+      display: block;
+      margin: 15px auto;
+      padding: 12px;
+      width: 90%;
+      max-width: 300px;
+      font-size: 18px;
+      border-radius: 8px;
+      border: none;
+    }
+
+    button {
+      background-color: #4CAF50;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    #message {
+      margin-top: 10px;
+      font-size: 16px;
+      color: yellow;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h1>🔐 Login / Sign Up</h1>
+    <input type="email" id="email" placeholder="Email" required />
+    <input type="password" id="password" placeholder="Password" required />
+    <select id="role">
+      <option value="student">Student</option>
+      <option value="admin">Admin</option>
+    </select>
+    <button onclick="signup()">Sign Up</button>
+    <button onclick="login()">Login</button>
+    <div id="message"></div>
+  </div>
+
+  <script type="module" src="./auth-script.js"></script>
+</body>
+</html>

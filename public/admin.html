@@ -1,80 +1,81 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>View Orders</title>
+  <meta charset="UTF-8">
+  <title>Admin - View Orders</title>
   <style>
     body {
-      background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUz9jDPZNpvkpJWKXq7UbHwHZrNJlPZj2zXA&s');
+      background-image: url('https://images.unsplash.com/photo-1600891964599-f61ba0e24092');
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
       font-family: 'Segoe UI', sans-serif;
       color: white;
-      padding: 40px;
-      text-align: center;
+      padding: 50px 20px;
     }
 
     h1 {
-      font-size: 40px;
-      margin-bottom: 30px;
-      text-shadow: 2px 2px 5px #000;
+      text-align: center;
+      font-size: 48px;
+      text-shadow: 2px 2px 4px #000;
+    }
+
+    #orders {
+      max-width: 800px;
+      margin: 30px auto;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 20px;
+      border-radius: 12px;
     }
 
     .order {
-      background: rgba(0, 0, 0, 0.6);
-      margin: 15px auto;
-      padding: 20px;
-      max-width: 500px;
-      border-radius: 12px;
-      text-align: left;
+      border-bottom: 1px solid #ccc;
+      padding: 10px 0;
     }
 
-    .order p {
-      font-size: 18px;
-      margin: 5px 0;
+    .order:last-child {
+      border-bottom: none;
     }
 
-    .back-btn {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    background-color: #2196f3;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-  }
-
-    .back-btn:hover {
-      background-color: #1976d2;
+    .label {
+      font-weight: bold;
+      color: #00e5ff;
     }
   </style>
 </head>
 <body>
-  <button class="back-btn" onclick="location.href='home.html'">⬅️ Home</button>
-  <h1>📋 All Orders</h1>
-  <div id="orders"></div>
+  <h1>📋 Admin - Orders List</h1>
+  <div id="orders">Loading orders...</div>
 
   <script>
-    async function fetchOrders() {
-      const res = await fetch('/orders');
-      const orders = await res.json();
-      const container = document.getElementById('orders');
-      orders.forEach(order => {
-        const div = document.createElement('div');
-        div.className = 'order';
-        div.innerHTML = `
-          <p><strong>Name:</strong> ${order.name}</p>
-          <p><strong>Roll:</strong> ${order.roll}</p>
-          <p><strong>Items:</strong> ${order.item}</p>
-          <p><strong>Status:</strong> ${order.status}</p>
-        `;
-        container.appendChild(div);
-      });
+    async function loadOrders() {
+      try {
+        const res = await fetch('/orders');
+        const orders = await res.json();
+        const ordersDiv = document.getElementById('orders');
+
+        if (orders.length === 0) {
+          ordersDiv.innerHTML = '<p>No orders found.</p>';
+          return;
+        }
+
+        ordersDiv.innerHTML = '';
+        orders.forEach(order => {
+          ordersDiv.innerHTML += `
+            <div class="order">
+              <p><span class="label">Name:</span> ${order.name}</p>
+              <p><span class="label">Roll:</span> ${order.roll}</p>
+              <p><span class="label">Items:</span> ${order.item}</p>
+              <p><span class="label">Status:</span> ${order.status}</p>
+            </div>
+          `;
+        });
+      } catch (err) {
+        document.getElementById('orders').innerText = 'Failed to load orders.';
+      }
     }
 
-    fetchOrders();
+    window.onload = loadOrders;
   </script>
 </body>
 </html>

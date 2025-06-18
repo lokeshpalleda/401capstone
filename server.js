@@ -1,14 +1,21 @@
 const express = require('express');
-const app = express();
-const db = require('./firebase');
 const path = require('path');
+const db = require('./firebase');
 
+const app = express();
 app.use(express.json());
-app.use(express.static('public')); // Serves home.html by default
 
+// ✅ Serve static files (JS, HTML, CSS)
+app.use(express.static('public'));
+
+// 🚀 Force "/" to always load auth.html
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'auth.html'));
+});
+
+// ✅ Place order route
 app.post('/order', async (req, res) => {
   const { name, roll, item } = req.body;
-
   try {
     await db.collection('orders').add({
       name,
@@ -35,4 +42,7 @@ app.get('/orders', async (req, res) => {
   }
 });
 
-app.listen(3000, () => console.log('Server running at http://localhost:3000/home.html'));
+
+app.listen(3000, () => {
+  console.log('http://localhost:3000/auth.html');
+});
